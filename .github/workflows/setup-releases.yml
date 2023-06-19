@@ -7,6 +7,7 @@ jobs:
     outputs:
       version: ${{ steps.set-ver.outputs.version }}
       release: ${{ steps.set-rel.outputs.release }}
+      relnotes: ${{ steps.set-relnotes.outputs.relnotes }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -18,6 +19,16 @@ jobs:
         id: set-rel
         run: |
           echo "release=$(gh release list --limit 1 -R rockstor/rockstor-core | cut -f1 | cut -d "-" -f2)" >> "$GITHUB_OUTPUT"
+      - name: Set Release Notes
+        id: set-relnotes
+        run: |
+          echo "relnotes=$(gh release view ${{ steps.set-ver.outputs.version }}-${{ needs.set-vars.outputs.release }} \
+          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
+          grep "^\* " | \
+          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
+          sed 's|by @|@|g' | \
+          sed 's|* |-|g' | \
+          tac)" >> "$GITHUB_OUTPUT"
   print-vars:
     name: Print version and release
     runs-on: ubuntu-latest
@@ -27,7 +38,11 @@ jobs:
           VERSION: ${{ needs.set-vars.outputs.version }}
           RELEASE: ${{ needs.set-vars.outputs.release }}
         run: echo "Rockstor version-release detected is $VERSION-$RELEASE"
-#    update_rocsktor-jslibs:
+      - env:
+          RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
+        run: |
+          echo "Changenotes are: \n$VERSION-$RELEASE"
+#    update_rockstor-jslibs:
 #      name: Update the rockstor-jslibs repo
 #    update_rockstor-rpmbuild:
-#      name: Update the rocsktor-rpmbuild repo
+#      name: Update the rockstor-rpmbuild repo
