@@ -53,6 +53,7 @@ jobs:
     env:
       VERSION: ${{ needs.set-vars.outputs.version }}
       RELEASE: ${{ needs.set-vars.outputs.release }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Create release on rockstor/rockstor-jslibs
         id: create-jslibs-release
