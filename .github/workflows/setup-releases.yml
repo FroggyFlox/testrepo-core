@@ -22,13 +22,23 @@ jobs:
       - name: Set Release Notes
         id: set-relnotes
         run: |
-          echo "relnotes=$(gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "relnotes<<$EOF" >> "$GITHUB_OUTPUT"
+          gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
           -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
           grep '^\* ' | \
           sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
           sed 's|by @|@|g' | \
           sed 's|* |-|g' | \
           tac)" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+#          echo "relnotes=$(gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
+#          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
+#          grep '^\* ' | \
+#          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
+#          sed 's|by @|@|g' | \
+#          sed 's|* |-|g' | \
+#          tac)" >> "$GITHUB_OUTPUT"
   print-vars:
     name: Print version and release
     runs-on: ubuntu-latest
