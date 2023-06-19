@@ -7,6 +7,8 @@ jobs:
     outputs:
       version: ${{ steps.set-ver.outputs.version }}
       release: ${{ steps.set-rel.outputs.release }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Set Version
         id: set-ver
