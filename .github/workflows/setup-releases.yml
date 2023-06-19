@@ -30,7 +30,7 @@ jobs:
           sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
           sed 's|by @|@|g' | \
           sed 's|* |-|g' | \
-          tac)" >> "$GITHUB_OUTPUT"
+          tac >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
 #          echo "relnotes=$(gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
 #          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
