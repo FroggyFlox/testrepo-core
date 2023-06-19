@@ -32,28 +32,35 @@ jobs:
           sed 's|* |-|g' | \
           tac >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
-#          echo "relnotes=$(gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
-#          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
-#          grep '^\* ' | \
-#          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
-#          sed 's|by @|@|g' | \
-#          sed 's|* |-|g' | \
-#          tac)" >> "$GITHUB_OUTPUT"
-  print-vars:
-    name: Print version and release
+#  print-vars:
+#    name: Print version and release
+#    runs-on: ubuntu-latest
+#    needs: set-vars
+#    steps:
+#      - env:
+#          VERSION: ${{ needs.set-vars.outputs.version }}
+#          RELEASE: ${{ needs.set-vars.outputs.release }}
+#        run: echo "Rockstor version-release detected is $VERSION-$RELEASE"
+#      - env:
+#          RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
+#        run: |
+#          echo "Changenotes are:"
+#          echo $RELNOTES
+  update_rockstor-jslibs:
+    name: Update the rockstor-jslibs repo
     runs-on: ubuntu-latest
     needs: set-vars
+    env:
+      VERSION: ${{ needs.set-vars.outputs.version }}
+      RELEASE: ${{ needs.set-vars.outputs.release }}
     steps:
-      - env:
-          VERSION: ${{ needs.set-vars.outputs.version }}
-          RELEASE: ${{ needs.set-vars.outputs.release }}
-        run: echo "Rockstor version-release detected is $VERSION-$RELEASE"
-      - env:
-          RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
+      - name: Create release on rockstor/rockstor-jslibs
+        id: create-jslibs-release
         run: |
-          echo "Changenotes are:"
-          echo $RELNOTES
-#    update_rockstor-jslibs:
-#      name: Update the rockstor-jslibs repo
+          gh release create ${{ steps.set-ver.outputs.version }} \
+          --notes "Tagging for next rockstor-core release." \
+          --title "${{ steps.set-ver.outputs.version }}" \
+          -R FroggyFlox/testrepo-dep1
+
 #    update_rockstor-rpmbuild:
 #      name: Update the rockstor-rpmbuild repo
