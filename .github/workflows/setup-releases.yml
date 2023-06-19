@@ -41,7 +41,8 @@ jobs:
       - env:
           RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
         run: |
-          echo "Changenotes are: \n$VERSION-$RELEASE"
+          echo "Changenotes are:"
+          echo $RELNOTES
 #    update_rockstor-jslibs:
 #      name: Update the rockstor-jslibs repo
 #    update_rockstor-rpmbuild:
