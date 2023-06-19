@@ -22,7 +22,7 @@ jobs:
       - name: Set Release Notes
         id: set-relnotes
         run: |
-          echo "relnotes=$(gh release view ${{ steps.set-ver.outputs.version }}-${{ needs.set-vars.outputs.release }} \
+          echo "relnotes=$(gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
           -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
           grep "^\* " | \
           sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
