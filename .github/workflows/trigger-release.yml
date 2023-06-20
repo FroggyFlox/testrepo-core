@@ -54,7 +54,7 @@ jobs:
     env:
       VERSION: ${{ needs.set-vars.outputs.version }}
 #      RELEASE: ${{ needs.set-vars.outputs.release }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
       - name: trigger the rockstor-jslibs workflow
         id: trigger-jslibs-workflow
