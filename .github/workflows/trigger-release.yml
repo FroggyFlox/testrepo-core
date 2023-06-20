@@ -50,6 +50,7 @@ jobs:
     name: Trigger a release in the rockstor-jslibs repo
     runs-on: ubuntu-latest
     needs: set-vars
+    permissions: write-all
     env:
       VERSION: ${{ needs.set-vars.outputs.version }}
 #      RELEASE: ${{ needs.set-vars.outputs.release }}
