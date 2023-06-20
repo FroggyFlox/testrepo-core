@@ -1,0 +1,70 @@
+name: Trigger releases
+on: workflow_dispatch
+jobs:
+  set-vars:
+    name: Get version, release, and notes
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set-ver.outputs.version }}
+      release: ${{ steps.set-rel.outputs.release }}
+      relnotes: ${{ steps.set-relnotes.outputs.relnotes }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Set Version
+        id: set-ver
+        run: |
+          echo "version=$(gh release list --limit 1 -R rockstor/rockstor-core | cut -f1 | cut -d "-" -f1)" >> "$GITHUB_OUTPUT"
+      - name: Set Release
+        id: set-rel
+        run: |
+          echo "release=$(gh release list --limit 1 -R rockstor/rockstor-core | cut -f1 | cut -d "-" -f2)" >> "$GITHUB_OUTPUT"
+      - name: Set Release Notes
+        id: set-relnotes
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "relnotes<<$EOF" >> "$GITHUB_OUTPUT"
+          gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
+          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
+          grep '^\* ' | \
+          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
+          sed 's|by @|@|g' | \
+          sed 's|* |-|g' | \
+          tac >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+#  print-vars:
+#    name: Print version and release
+#    runs-on: ubuntu-latest
+#    needs: set-vars
+#    steps:
+#      - env:
+#          VERSION: ${{ needs.set-vars.outputs.version }}
+#          RELEASE: ${{ needs.set-vars.outputs.release }}
+#        run: echo "Rockstor version-release detected is $VERSION-$RELEASE"
+#      - env:
+#          RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
+#        run: |
+#          echo "Changenotes are:"
+#          echo $RELNOTES
+  trigger_rockstor-jslibs_release:
+    name: Trigger a release in the rockstor-jslibs repo
+    runs-on: ubuntu-latest
+    needs: set-vars
+    env:
+      VERSION: ${{ needs.set-vars.outputs.version }}
+#      RELEASE: ${{ needs.set-vars.outputs.release }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: trigger the rockstor-jslibs workflow
+        id: trigger-jslibs-workflow
+        run: |
+          gh workflow run update_release.yml \
+          -f version=$VERSION \
+          -R FroggyFlox/testrepo-dep1
+#          gh release create $VERSION \
+#          --notes "Tagging for next rockstor-core release." \
+#          --title "$VERSION" \
+#          -R FroggyFlox/testrepo-dep1
+
+#    update_rockstor-rpmbuild:
+#      name: Update the rockstor-rpmbuild repo
