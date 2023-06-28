@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: GitHubSecurityLab/actions-permissions/monitor@v1
         with:
-          config: { "create_artifact": true, "enabled": true, "debug": false }
+          config: ${{ vars.PERMISSIONS_CONFIG }}
       - name: trigger the rockstor-jslibs workflow
         id: trigger-jslibs-workflow
         run: |
@@ -65,7 +65,7 @@ jobs:
     steps:
       - uses: GitHubSecurityLab/actions-permissions/monitor@v1
         with:
-          config: { "create_artifact": true, "enabled": true, "debug": false }
+          config: ${{ vars.PERMISSIONS_CONFIG }}
       - name: trigger the rockstor-jslibs workflow
         id: trigger-jslibs-workflow
         run: |
