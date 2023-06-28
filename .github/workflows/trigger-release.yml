@@ -7,7 +7,7 @@ jobs:
     outputs:
       version: ${{ steps.set-ver.outputs.version }}
       release: ${{ steps.set-rel.outputs.release }}
-      relnotes: ${{ steps.set-relnotes.outputs.relnotes }}
+#      relnotes: ${{ steps.set-relnotes.outputs.relnotes }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -19,19 +19,19 @@ jobs:
         id: set-rel
         run: |
           echo "release=$(gh release list --limit 1 -R rockstor/rockstor-core | cut -f1 | cut -d "-" -f2)" >> "$GITHUB_OUTPUT"
-      - name: Set Release Notes
-        id: set-relnotes
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "relnotes<<$EOF" >> "$GITHUB_OUTPUT"
-          gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
-          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
-          grep '^\* ' | \
-          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
-          sed 's|by @|@|g' | \
-          sed 's|* |-|g' | \
-          tac >> "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
+#      - name: Set Release Notes
+#        id: set-relnotes
+#        run: |
+#          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+#          echo "relnotes<<$EOF" >> "$GITHUB_OUTPUT"
+#          gh release view ${{ steps.set-ver.outputs.version }}-${{ steps.set-rel.outputs.release }} \
+#          -R rockstor/rockstor-core --json body --template '{{ .body }}{{"\n"}}' | \
+#          grep '^\* ' | \
+#          sed 's|in https://github.com/rockstor/rockstor-core/pull/[0-9]*||g' | \
+#          sed 's|by @|@|g' | \
+#          sed 's|* |-|g' | \
+#          tac >> "$GITHUB_OUTPUT"
+#          echo "$EOF" >> "$GITHUB_OUTPUT"
 
   trigger_rockstor-jslibs_release:
     name: Trigger a release in the rockstor-jslibs repo
@@ -40,7 +40,6 @@ jobs:
     permissions: write-all
     env:
       VERSION: ${{ needs.set-vars.outputs.version }}
-#      RELEASE: ${{ needs.set-vars.outputs.release }}
       GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
       - name: trigger the rockstor-jslibs workflow
@@ -58,7 +57,7 @@ jobs:
     env:
       VERSION: ${{ needs.set-vars.outputs.version }}
       RELEASE: ${{ needs.set-vars.outputs.release }}
-      RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
+#      RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
       GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
       - name: trigger the rockstor-jslibs workflow
@@ -67,5 +66,4 @@ jobs:
           gh workflow run update_spec_file.yml \
           -f version=$VERSION \
           -f release=$RELEASE \
-          -f relnotes=$RELNOTES \
           -R FroggyFlox/testrepo-dep2
