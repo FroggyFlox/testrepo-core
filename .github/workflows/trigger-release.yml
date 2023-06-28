@@ -42,6 +42,9 @@ jobs:
       VERSION: ${{ needs.set-vars.outputs.version }}
       GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          config: { "create_artifact": true, "enabled": true, "debug": false }
       - name: trigger the rockstor-jslibs workflow
         id: trigger-jslibs-workflow
         run: |
@@ -60,6 +63,9 @@ jobs:
 #      RELNOTES: ${{ needs.set-vars.outputs.relnotes }}
       GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          config: { "create_artifact": true, "enabled": true, "debug": false }
       - name: trigger the rockstor-jslibs workflow
         id: trigger-jslibs-workflow
         run: |
