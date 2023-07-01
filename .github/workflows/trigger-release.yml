@@ -32,6 +32,7 @@ jobs:
         run: |
           gh workflow run update_release.yml \
           -f version=$VERSION \
+          -f target_branch=${GITHUB_REF_NAME} \
           -R FroggyFlox/testrepo-dep1
 
   trigger_rockstor-rpmbuild-updates:
@@ -49,4 +50,5 @@ jobs:
           gh workflow run update_spec_file.yml \
           -f version=$VERSION \
           -f release=$RELEASE \
+          -f target_branch=${GITHUB_REF_NAME} \
           -R FroggyFlox/testrepo-dep2
