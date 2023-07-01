@@ -1,0 +1,20 @@
+name: Print variables
+on: workflow_dispatch
+jobs:
+#  set-vars:
+#    name: Print test variables
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Set Version
+#        id: set-branch
+#        run: |
+#          echo "version=$(gh release list --limit 1 -R rockstor/rockstor-core | cut -f1 | cut -d "-" -f1)" >> "$GITHUB_OUTPUT"
+  print-vars:
+    name: Print vars
+    runs-on: ubuntu-latest
+    needs: print-vars
+    steps:
+      - name: Print GITHUB_REF_NAME
+        run: echo $GITHUB_REF_NAME
+      - name: Print GITHUB_REF
+        run: echo $GITHUB_REF
