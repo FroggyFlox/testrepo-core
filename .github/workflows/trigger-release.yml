@@ -44,8 +44,8 @@ jobs:
       RELEASE: ${{ needs.set-vars.outputs.release }}
       GH_TOKEN: ${{ secrets.GH_ACTION_TOKEN }}
     steps:
-      - name: trigger the rockstor-jslibs workflow
-        id: trigger-jslibs-workflow
+      - name: trigger the rockstor-rpmbuild workflow
+        id: trigger-rpmbuild-workflow
         run: |
           gh workflow run update_spec_file.yml \
           -f version=$VERSION \
